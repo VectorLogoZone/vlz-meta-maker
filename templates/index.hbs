@@ -1,0 +1,25 @@
+{{> above}}
+
+      <p>
+        Make the <code>index.md</code> file by parsing a website URL
+      </p>
+        <p>
+        <form method="post" action="/" enctype="multipart/form-data">
+            <input type="hidden" name="step" value="{{step}}" />
+          <fieldset>
+            <legend>
+              Make Metadata
+            </legend>            
+          <div class="input-field">
+            <label>Website URL</label>
+            <input type="text" name="url" value="{{url}}" />  
+          </div>
+          
+          <div class="input-field">
+            <input type="submit" value="Start" />
+          </div>
+          </fieldset>
+          
+      </form>
+      </p>
+{{> below}}     

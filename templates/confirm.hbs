@@ -1,0 +1,57 @@
+{{> above}}
+
+<p>
+  Make the <code>index.md</code> file by parsing a website URL
+</p>
+<p>
+  <form method="post" action="/" enctype="multipart/form-data">
+    <input type="hidden" name="step" value="{{step}}" />
+    <fieldset>
+      <legend>
+        Basic Info
+      </legend>            
+      <div class="input-field">
+        <label>Website URL</label>
+        <input type="text" name="website" value="{{metadata.website}}" />  
+      </div>
+      <div class="input-field">
+        <label>Title</label>
+        <input type="text" name="title" value="{{metadata.title}}" />  
+      </div>
+      <div class="input-field">
+        <label>ID</label>
+        <input type="text" name="logohandle" value="{{metadata.logohandle}}" />  
+      </div>
+      <div class="input-field">
+        <label>Sort key</label>
+        <input type="text" name="sort" value="{{metadata.sort}}" />  
+      </div>
+
+    </fieldset>
+    <fieldset>
+      <legend>
+      Social Networking Pages
+      </legend> 
+      {{#each socialsites}}
+      <div class="input-field">
+      <label>{{this.id}}</label>
+      <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
+      </div>
+{{/each}}
+  
+      <div class="input-field">
+      <input type="submit" value="Save" />
+      </div>
+    </fieldset>
+
+  </form>
+</p>
+<!--
+<p>
+metadata: {{toJSON metadata}}
+  {{#each metadata}}
+  <br/>@index: {{lookup ../metadata @key}} / {{@index}} / {{@key}}
+{{/each}}
+</p>
+-->
+{{> below}} 
