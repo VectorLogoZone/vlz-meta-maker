@@ -437,6 +437,7 @@ function sendJson(req, res, jsonObj) {
 }
 
 var listener = app.listen(process.env.PORT || 4000, function () {
-  console.log('Listening on port ' + listener.address().port);
+    console.log("S3 Key=" + process.env.S3_ACCESS_KEY);
+    console.log('Listening on port ' + listener.address().port);
 });
 
