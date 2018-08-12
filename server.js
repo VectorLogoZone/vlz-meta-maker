@@ -266,8 +266,13 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
       var s = new Readable;
       s.push(yaml.safeDump(logodata, { lineWidth: 4096, noRefs: true, sortKeys: true }));
       s.push(null);
-      minioClient.putObject(process.env.S3_BUCKET, logodata.logohandle + ".yaml", s);
-      res.write("SUCCESS!");
+      try {
+          await minioClient.putObject(process.env.S3_BUCKET, logodata.logohandle + ".yaml", s);
+          res.write("SUCCESS!");
+      } catch (err) {
+          console.error(err);
+          res.write("FAILED: " + err.message);
+      }
       res.end();
       return;
     }
