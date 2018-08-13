@@ -47,7 +47,9 @@ function getStatus() {
 
 	retVal["success"] = true;
 	retVal["message"] = "OK";
-	retVal["timestamp"] = new Date().toISOString();
+    retVal["timestamp"] = new Date().toISOString();
+    retVal["lastmod"] = process.env.LASTMOD || null;
+    retVal["commit"] = process.env.COMMIT || null;
 	retVal["__dirname"] = __dirname;
 	retVal["__filename"] = __filename;
 	retVal["os.hostname"] = os.hostname();
@@ -68,7 +70,7 @@ function getStatus() {
 	retVal["process.memoryUsage"] = process.memoryUsage();
 	retVal["process.platform"] = process.platform;
 	retVal["process.release"] = process.release;
-  retVal["process.title"] = process.title;
+    retVal["process.title"] = process.title;
 	retVal["process.uptime"] = process.uptime;
 	retVal["process.version"] = process.version;
 	retVal["process.versions"] = process.versions;
@@ -301,113 +303,60 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
   
     var messages = [];
   
-  //res.write("Content-Type     : " + mimetype + "\n");
-  //res.write("Buffer size      : " + buf.length + "\n");
-  //console.log("buf=" + buf.substring(0, 500) + "\n");
-  const text = 'Lorem ipsum dolor sit amet, //sindresorhus.com consectetuer adipiscing http://yeoman.io elit.';
-  
-  var metadata = { "website": url};
-  
-  var match = buf.match(new RegExp("<title>(.*)</title>"));
-  if (match != null) {
-    metadata.title = match[1];
-  } else {
-    messages.push("WARNING: no title");
-  }
+    var metadata = { "website": response.request.uri.href };
+    if (url != response.request.uri.href) {
+        metadata.originalurl = url;
+    }
 
-  var urls = geturls(buf);
-  
-  urls.forEach(function(strURL) {
-    //res.write("url=" + strURL + "\n");
-    try {
-      if (strURL.endsWith("%27")) {
-        strURL = strURL.slice(0, -3);
-      }
-      const theURL = new URL(strURL);
-      
-      socialSites.forEach(function (theSite) {
-        if (theSite.fn(theURL)) {
-          if (metadata[theSite.id]) {
-            messages.push("WARNING: multiple " + theSite.id + " URLs! (" + theURL.href + ")");
-          }
-          else {
-            if (theSite.cleanup) {
-              metadata[theSite.id] = theSite.cleanup(theURL);
-            } else {
-              metadata[theSite.id] = theURL.href;
+    var match = buf.match(new RegExp("<title>(.*)</title>"));
+    if (match != null) {
+        metadata.title = match[1];
+    } else {
+        messages.push("WARNING: no title");
+    }
+
+    var urls = geturls(buf);
+
+    urls.forEach(function(strURL) {
+        //res.write("url=" + strURL + "\n");
+        try {
+            if (strURL.endsWith("%27")) {
+                strURL = strURL.slice(0, -3);
             }
-          }
-        }          
-      });
-    }
-    catch (err) {
-      messages.push("ERROR: " + err);
-    }
-  });
-  
-  
-  if (false) { //NO: now stored in a separate file & updated with python script
-    /*
-     * see if there is a favicon in the subdirectory
-     */
-    if (mainURL.pathname != "/") {
-      var faviconPathname = mainURL.pathname;
-      while (faviconPathname.length > 0 && faviconPathname.endsWith('/') == false) {
-        faviconPathname = faviconPathname.slice(0, -1);
-      }
-      var faviconURL = mainURL.origin + faviconPathname + "favicon.ico";
-      if (await checkFavicon(res, faviconURL)) {
-        metadata.favicon = faviconURL;
-      }
-    }
+            const theURL = new URL(strURL);
 
-    /*
-     * see if there is a root favicon
-     */
-    if (!metadata.favicon) {
-      var faviconURL = mainURL.origin + "/favicon.ico";
-      if (await checkFavicon(res, faviconURL)) {
-        // default, no need to save
-        res.write("INFO: default favicon found at '" + faviconURL + "'\n");
-      }
-      else {
-        var customFaviconURL = findFaviconURL(res, url, buf);
-        if (customFaviconURL != null) {
-          metadata.favicon = customFaviconURL;
+            socialSites.forEach(function (theSite) {
+            if (theSite.fn(theURL)) {
+              if (metadata[theSite.id]) {
+                messages.push("WARNING: multiple " + theSite.id + " URLs! (" + theURL.href + ")");
+              }
+              else {
+                if (theSite.cleanup) {
+                  metadata[theSite.id] = theSite.cleanup(theURL);
+                } else {
+                  metadata[theSite.id] = theURL.href;
+                }
+              }
+            }
+            });
         }
-      }
-    }
-  }  
-  
-  
-  var parsed = psl.parse(mainURL.host);
-  metadata.sort = parsed.sld;
-  if (parsed.tld == "com" || parsed.tld == "org") {
-    metadata.logohandle = parsed.sld
-  }
-  else {
-    metadata.logohandle = parsed.domain.replace('.', '');
-  }
-  
-  if (req.body["step"] == "url") {
-      res.render("confirm", { metadata: metadata, socialsites: socialSites, step: "confirm" });
-  } else if (req.body["step"] == "sconfirm") {
-    var f = fs.createWriteStream(metadata.logohandle + ".txt");
-    f.write("---\n");
-    f.write(yaml.safeDump(metadata, {sortKeys: true } ));
-    f.write("---\n");
-    f.end();
-  }
+        catch (err) {
+            messages.push("ERROR: " + err);
+        }
+    });
 
-  /*
-  res.write("\n\necho \"---\n");
-  res.write(yaml.safeDump(metadata, {sortKeys: true } ));
-  res.write("---\n");
-  res.write("\" >" + metadata.logohandle + ".txt\n\n");
-  //res.write("Complete!\n");
-  res.end();
-  */
-   
+    var parsed = psl.parse(mainURL.host);
+    metadata.sort = parsed.sld;
+    if (parsed.tld == "com" || parsed.tld == "org") {
+        metadata.logohandle = parsed.sld
+    }
+    else {
+        metadata.logohandle = parsed.domain.replace('.', '');
+    }
+  
+    if (req.body["step"] == "url") {
+        res.render("confirm", { metadata: metadata, socialsites: socialSites, step: "confirm" });
+    }
 }));
 
 app.use(function (req, res, next) {

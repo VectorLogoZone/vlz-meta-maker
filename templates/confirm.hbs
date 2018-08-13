@@ -12,7 +12,10 @@
       </legend>            
       <div class="input-field">
         <label>Website URL</label>
-        <input type="text" name="website" value="{{metadata.website}}" />  
+        <input type="text" name="website" value="{{metadata.website}}" />
+        {{# if metadata.originalurl }}
+          <br/>{{ metadata.originalurl }}
+        {{/if}}
       </div>
       <div class="input-field">
         <label>Title</label>
