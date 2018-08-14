@@ -1,0 +1,17 @@
+{
+    "restartable": "rs",
+    "ignore": [
+        ".git",
+        "node_modules",
+        "tmp"
+    ],
+    "verbose": true,
+    "watch": [
+        "templates/",
+        "partials/"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "hbs,js,json"
+}

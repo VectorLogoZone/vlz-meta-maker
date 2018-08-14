@@ -4,4 +4,4 @@
 #
 
 export $(grep ^[^\#] .env)
-node server.js
+nodemon server.js
