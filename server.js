@@ -32,6 +32,8 @@ hbs.registerPartial("below", fs.readFileSync("./partials/below.hbs", "utf-8"));
 hbs.registerHelper('isUrl', function(url, options) { return this.url == url || this.url.startsWith(url + "?") ? options.fn(this) : '';});
 hbs.registerHelper('isParam', function(param, value, options) { return options.data.root[param] == value ? options.fn(this) : options.inverse(this);});
 hbs.registerHelper('toJSON', function(object){ return JSON.stringify(object);});  //NOTE: use new hbs.SafeString() if you need to avoid HTML encoding
+hbs.registerHelper('hasAlternate', function(site, options) { return ('alt' + site) in options.data.root.metadata  && options.data.root.metadata['alt' + site].length > 1; });
+hbs.registerHelper('getAlternates', function(site, options) { return options.data.root.metadata['alt' + site]; });
 
 const USER_AGENT = "vlz-meta-maker";
 
@@ -43,7 +45,7 @@ const minioClient = new minio.Client({
 });
 
 function getStatus() {
-	var retVal = {}
+	const retVal = {};
 
 	retVal["success"] = true;
 	retVal["message"] = "OK";
@@ -326,18 +328,16 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
             const theURL = new URL(strURL);
 
             socialSites.forEach(function (theSite) {
-            if (theSite.fn(theURL)) {
-              if (metadata[theSite.id]) {
-                messages.push("WARNING: multiple " + theSite.id + " URLs! (" + theURL.href + ")");
-              }
-              else {
-                if (theSite.cleanup) {
-                  metadata[theSite.id] = theSite.cleanup(theURL);
-                } else {
-                  metadata[theSite.id] = theURL.href;
+                if (theSite.fn(theURL)) {
+                    var siteURL = theSite.cleanup ? theSite.cleanup(theURL) : theURL.href;
+                    if (metadata[theSite.id]) {
+                        metadata['alt' + theSite.id].push(siteURL);
+                    }
+                    else {
+                        metadata[theSite.id] = siteURL;
+                        metadata['alt' + theSite.id] = [ siteURL ];
+                    }
                 }
-              }
-            }
             });
         }
         catch (err) {

@@ -1,4 +1,9 @@
 {{> above}}
+<script>
+    function setURL(selector, url) {
+        $(selector).val(url);
+    }
+</script>
 
 <p>
   Make the <code>index.md</code> file by parsing a website URL
@@ -14,7 +19,7 @@
         <label>Website URL</label>
         <input type="text" name="website" value="{{metadata.website}}" />
         {{# if metadata.originalurl }}
-          <br/>{{ metadata.originalurl }}
+          <br/>{{ metadata.originalurl }} <a href="javascript:setURL('input[name=website]', '{{metadata.originalurl}}');" class="button button-sm button-secondary">Use</a>
         {{/if}}
       </div>
       <div class="input-field">
@@ -35,15 +40,20 @@
       <legend>
       Social Networking Pages
       </legend> 
-      {{#each socialsites}}
+      {{#each socialsites as |socialsite| }}
       <div class="input-field">
       <label>{{this.id}}</label>
       <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
+          {{#if (hasAlternate this.id) }}
+              {{#each (getAlternates this.id) as | alternate | }}
+              {{alternate}} <a href="javascript:setURL('input[name={{socialsite.id}}]', '{{alternate}}');" class="button button-sm button-secondary">Use</a><br/>
+              {{/each}}
+          {{/if}}
       </div>
 {{/each}}
   
       <div class="input-field">
-      <input type="submit" value="Save" />
+      <input class="button" type="submit" value="Save" />
       </div>
     </fieldset>
 
