@@ -6,65 +6,72 @@
 </script>
 
 <p>
-  Make the <code>index.md</code> file by parsing a website URL
+    Make the <code>index.md</code> file by parsing a website URL
 </p>
 <p>
-  <form method="post" action="/" enctype="multipart/form-data">
+<form method="post" action="/" enctype="multipart/form-data">
     <input type="hidden" name="step" value="{{step}}" />
     <fieldset>
-      <legend>
-        Basic Info
-      </legend>            
-      <div class="input-field">
-        <label>Website URL</label>
-        <input type="text" name="website" value="{{metadata.website}}" />
-        {{# if metadata.originalurl }}
-          <br/>{{ metadata.originalurl }} <a href="javascript:setURL('input[name=website]', '{{metadata.originalurl}}');" class="button button-sm button-secondary">Use</a>
-        {{/if}}
-      </div>
-      <div class="input-field">
-        <label>Title</label>
-        <input type="text" name="title" value="{{metadata.title}}" />  
-      </div>
-      <div class="input-field">
-        <label>ID</label>
-        <input type="text" name="logohandle" value="{{metadata.logohandle}}" />  
-      </div>
-      <div class="input-field">
-        <label>Sort key</label>
-        <input type="text" name="sort" value="{{metadata.sort}}" />  
-      </div>
-
+        <legend>
+            Basic Info
+        </legend>
+        <div class="input-field">
+            <label>Website URL</label>
+            <input type="text" name="website" value="{{metadata.website}}" />
+            {{# if metadata.originalurl }}
+                <br/>{{ metadata.originalurl }} <a href="javascript:setURL('input[name=website]', '{{metadata.originalurl}}');" class="button button-sm button-secondary">Use</a>
+            {{/if}}
+        </div>
+        <div class="input-field">
+            <label>Title (as short as possible, no tag line)</label>
+            <input type="text" name="title" value="{{metadata.title}}" />
+        </div>
+        <div class="input-field">
+            <label>ID (based on website, must be unique)</label>
+            <input type="text" name="logohandle" value="{{metadata.logohandle}}" />
+        </div>
+        <div class="input-field">
+            <label>Sort key (lower-case, usually the same as title)</label>
+            <input type="text" name="sort" value="{{metadata.sort}}" />
+        </div>
+        <div class="input-field">
+            <label>Brand Guidelines</label>
+            <input type="text" name="guide" value="{{metadata.guide}}" />
+        </div>
+        <div class="input-field">
+            <label>Notes (not visible, for reviewers only)</label>
+            <textarea rows="5">{{metadata.notes}}</textarea>
+        </div>
     </fieldset>
     <fieldset>
-      <legend>
-      Social Networking Pages
-      </legend> 
-      {{#each socialsites as |socialsite| }}
-      <div class="input-field">
-      <label>{{this.id}}</label>
-      <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
-          {{#if (hasAlternate this.id) }}
-              {{#each (getAlternates this.id) as | alternate | }}
-              {{alternate}} <a href="javascript:setURL('input[name={{socialsite.id}}]', '{{alternate}}');" class="button button-sm button-secondary">Use</a><br/>
-              {{/each}}
-          {{/if}}
-      </div>
-{{/each}}
-  
-      <div class="input-field">
-      <input class="button" type="submit" value="Save" />
-      </div>
+        <legend>
+            Social Networking Pages
+        </legend>
+        {{#each socialsites as |socialsite| }}
+            <div class="input-field">
+                <label>{{this.id}}</label>
+                <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
+                {{#if (hasAlternate this.id) }}
+                    {{#each (getAlternates this.id) as | alternate | }}
+                        {{alternate}} <a href="javascript:setURL('input[name={{socialsite.id}}]', '{{alternate}}');" class="button button-sm button-secondary">Use</a><br/>
+                    {{/each}}
+                {{/if}}
+            </div>
+        {{/each}}
+
+        <div class="input-field">
+            <input class="button" type="submit" value="Save" />
+        </div>
     </fieldset>
 
-  </form>
+</form>
 </p>
 <!--
 <p>
 metadata: {{toJSON metadata}}
-  {{#each metadata}}
+    {{#each metadata}}
   <br/>@index: {{lookup ../metadata @key}} / {{@index}} / {{@key}}
-{{/each}}
+    {{/each}}
 </p>
 -->
-{{> below}} 
+{{> below}}
