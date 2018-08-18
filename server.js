@@ -25,6 +25,7 @@ require("tls").DEFAULT_ECDH_CURVE = "auto";
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(express.static('static'));
 app.set('view engine', 'hbs');
 app.set('views', './templates');
 //app.use(express.static('public'));
@@ -216,19 +217,43 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         s.push(null);
         try {
             await minioClient.putObject(process.env.S3_BUCKET, logodata.logohandle + ".yaml", s);
-            res.write("SUCCESS!");
+            res.render("index", { step: "url", url: "", msgtype: "success", msgtext: "Metadata for '" + logodata.logohandle + "' saved!" });
         } catch (err) {
             console.error(err);
             res.write("FAILED: " + err.message);
+            res.end();
         }
-        res.end();
+
         return;
     }
 
     const url = req.body["url"];
-    if (url == null) {
-        res.write("ERROR: url is required");
-        res.end();
+    if (url == null || url.length === 0) {
+        res.render("index", { step: "url", msgtype: "danger", msgtext: "URL is required" });
+        return;
+    }
+
+    const recaptchaStr = await rp({
+        url: "https://www.google.com/recaptcha/api/siteverify",
+        method: "POST",
+        form: { secret: process.env.RECAPTCHA_SECRET, response: req.body["g-recaptcha-response"] },
+        timeout: 10000,
+    });
+
+    const recaptcha = JSON.parse(recaptchaStr);
+
+
+    if (!recaptcha.success) {
+        console.log("INFO: body=" + JSON.stringify(req.body));
+        console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
+        res.render("index", { step: "url", url: url, msgtype: "danger", msgtext: "Sorry, reCaptcha things you are a bot.  Maybe try again?" });
+        return;
+    }
+
+    if (recaptcha.hostname != "localhost" && recaptcha.hostname != process.env.RECAPTCHA_HOSTNAME) {
+        console.log("INFO: body=" + JSON.stringify(req.body));
+        console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
+        res.render("index", { step: "url", url: url, msgtype: "danger", msgtext: "That's funny: reCaptcha thinks you are solving on '" + recaptcha.hostname + "'. Why is that?" });
         return;
     }
 
