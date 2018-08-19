@@ -197,7 +197,7 @@ app.get('/favicon.svg', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    res.render("index", { "step": "url" });
+    res.render("index", { step: "url", recaptcha: process.env.RECAPTCHA_SITEKEY });
     return;
 });
 
@@ -217,7 +217,7 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         s.push(null);
         try {
             await minioClient.putObject(process.env.S3_BUCKET, logodata.logohandle + ".yaml", s);
-            res.render("index", { step: "url", url: "", msgtype: "success", msgtext: "Metadata for '" + logodata.logohandle + "' saved!" });
+            res.render("index", { step: "url", recaptcha: process.env.RECAPTCHA_SITEKEY, url: "", msgtype: "success", msgtext: "Metadata for '" + logodata.logohandle + "' saved!" });
         } catch (err) {
             console.error(err);
             res.write("FAILED: " + err.message);
@@ -229,32 +229,47 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
 
     const url = req.body["url"];
     if (url == null || url.length === 0) {
-        res.render("index", { step: "url", msgtype: "danger", msgtext: "URL is required" });
+        res.render("index", { step: "url", recaptcha: process.env.RECAPTCHA_SITEKEY, msgtype: "danger", msgtext: "URL is required" });
         return;
     }
 
-    const recaptchaStr = await rp({
-        url: "https://www.google.com/recaptcha/api/siteverify",
-        method: "POST",
-        form: { secret: process.env.RECAPTCHA_SECRET, response: req.body["g-recaptcha-response"] },
-        timeout: 10000,
-    });
+    var recaptchaSecret = process.env.RECAPTCHA_SECRET;
+    if (recaptchaSecret) {
+        const recaptchaStr = await rp({
+            url: "https://www.google.com/recaptcha/api/siteverify",
+            method: "POST",
+            form: {secret: recaptchaSecret, response: req.body["g-recaptcha-response"]},
+            timeout: 10000,
+        });
 
-    const recaptcha = JSON.parse(recaptchaStr);
+        const recaptcha = JSON.parse(recaptchaStr);
 
 
-    if (!recaptcha.success) {
-        console.log("INFO: body=" + JSON.stringify(req.body));
-        console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
-        res.render("index", { step: "url", url: url, msgtype: "danger", msgtext: "Sorry, reCaptcha things you are a bot.  Maybe try again?" });
-        return;
-    }
+        if (!recaptcha.success) {
+            console.log("INFO: body=" + JSON.stringify(req.body));
+            console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
+            res.render("index", {
+                step: "url",
+                recaptcha: process.env.RECAPTCHA_SITEKEY,
+                url: url,
+                msgtype: "danger",
+                msgtext: "Sorry, reCaptcha things you are a bot.  Maybe try again?"
+            });
+            return;
+        }
 
-    if (recaptcha.hostname != "localhost" && recaptcha.hostname != process.env.RECAPTCHA_HOSTNAME) {
-        console.log("INFO: body=" + JSON.stringify(req.body));
-        console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
-        res.render("index", { step: "url", url: url, msgtype: "danger", msgtext: "That's funny: reCaptcha thinks you are solving on '" + recaptcha.hostname + "'. Why is that?" });
-        return;
+        if (recaptcha.hostname != "localhost" && recaptcha.hostname != process.env.RECAPTCHA_HOSTNAME) {
+            console.log("INFO: body=" + JSON.stringify(req.body));
+            console.log("INFO: recaptcha=" + JSON.stringify(recaptcha));
+            res.render("index", {
+                step: "url",
+                recaptcha: process.env.RECAPTCHA_SITEKEY,
+                url: url,
+                msgtype: "danger",
+                msgtext: "That's funny: reCaptcha thinks you are solving on '" + recaptcha.hostname + "'. Why is that?"
+            });
+            return;
+        }
     }
 
     const mainURL = new URL(url);

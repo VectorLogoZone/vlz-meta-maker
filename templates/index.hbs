@@ -20,10 +20,11 @@
         <div class="input-field">
             <button class="button" onclick="grecaptcha.execute(); return false;">Start</button>
         </div>
-
+        {{# if recaptcha }}
         <div class="text-center">
-            <div class="g-recaptcha" data-badge="inline" data-sitekey="6Lcfk2oUAAAAAP4JzeEf-3clYeeVVrUEelYjdUSj" data-size="invisible" data-callback='onSubmit'></div>
+            <div class="g-recaptcha" data-badge="inline" data-sitekey="{{recaptcha}}" data-size="invisible" data-callback='onSubmit'></div>
         </div>
+        {{/if}}
     </fieldset>
 </form>
 </p>
