@@ -211,6 +211,12 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
                 delete logodata[ss.id];
             }
         });
+        if (logodata.guide == "") {
+            delete logodata.guide;
+        }
+        if (logodata.notes == "") {
+            delete logodata.notes;
+        }
         console.log("logodata=" + JSON.stringify(logodata));
         var s = new Readable;
         s.push(yaml.safeDump(logodata, { lineWidth: 4096, noRefs: true, sortKeys: true }));
