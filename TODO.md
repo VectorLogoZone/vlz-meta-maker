@@ -1,7 +1,11 @@
 
 # To Do
 
- - [ ] github (how?)
  - [ ] wikipedia (Wikipedia search?  Google Card search?)
+ - [ ] github (how?)
+ - [ ] max file size (to prevent DoS)
+ - [ ] login (to prevent spam)
  - [ ] try to parse the `<title>` tag to isolate name from catchphrase
- - [ ] use actual URL retrieved (vs URL entered, i.e. after redirects) as the website (or at least consider it)
+ - [ ] check if it already exists
+ - [ ] separate page with list of pending entries
+ - [ ] trim whitespace from everything

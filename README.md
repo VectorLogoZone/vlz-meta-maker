@@ -1,4 +1,4 @@
-<img alt="TIL Logo" src="https://www.vectorlogo.zone/logos/vectorlogozone/vectorlogozone-tile.svg" height="96" >
+<img alt="TIL Logo" src="https://metamaker.vectorlogo.zone/favicon.svg" height="96" >
 
 # VLZ Meta Maker
 
@@ -26,14 +26,15 @@ See the [to do list](TODO.md) for a list of things that are planned.
 [![Git](https://www.vectorlogo.zone/logos/git-scm/git-scm-ar21.svg)](https://git-scm.com/ "Version control")
 [![Github](https://www.vectorlogo.zone/logos/github/github-ar21.svg)](https://github.com/ "Code hosting")
 [![Google Analytics](https://www.vectorlogo.zone/logos/google_analytics/google_analytics-ar21.svg)](https://www.google.com/analytics "Traffic Measurement")
+[![Handlebars](https://www.vectorlogo.zone/logos/handlebarsjs/handlebarsjs-ar21.svg)](http://handlebarsjs.com/ "Templating")
 [![JavaScript](https://www.vectorlogo.zone/logos/javascript/javascript-ar21.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript "Programming Language")
+[![Minio](https://www.vectorlogo.zone/logos/minioio/minioio-ar21.svg)](https://www.minio.io/ "Cloud Storage API")
 [![Node.js](https://www.vectorlogo.zone/logos/nodejs/nodejs-ar21.svg)](https://nodejs.org/ "Application Server")
 [![npm](https://www.vectorlogo.zone/logos/npmjs/npmjs-ar21.svg)](https://www.npmjs.com/ "JS Package Management")
+[![Public Suffix List](https://www.vectorlogo.zone/logos/mozilla/mozilla-ar21.svg)](https://publicsuffix.org/ "Public Suffix List")
 [![Shoelace CSS](https://www.vectorlogo.zone/logos/shoelacestyle/shoelacestyle-ar21.svg)](https://shoelace.style/ "CSS")
 [![Zeit](https://www.vectorlogo.zone/logos/zeit/zeit-ar21.svg)](https://www.zeit.com/ "Hosting")
 
- * minio
- * handlebars
- * public suffix list
+* [sindresorhus/get-urls](https://github.com/sindresorhus/get-urls)
 
 

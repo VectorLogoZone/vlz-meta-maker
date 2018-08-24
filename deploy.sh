@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# deploy to zeit
+#
 
 LASTMOD=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 grep -q "^LASTMOD=" .env
@@ -21,6 +24,6 @@ NAME=$(cat ./now.json | jq '.name' --raw-output)
 OLD_DEPLOY=$(curl "https://api.zeit.co/v2/now/deployments" --silent --show-error --header "Authorization: Bearer $TOKEN" | jq ".deployments[] | select(.name | contains(\"$NAME\")) | .url" --raw-output)
 
 
-now --public --dotenv  && now alias
+now --public --dotenv && now alias
 
 now rm $OLD_DEPLOY

@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(express.static('static'));
 app.set('view engine', 'hbs');
 app.set('views', './templates');
-//app.use(express.static('public'));
+app.use(express.static('static'));
 
 hbs.registerPartial("above", fs.readFileSync("./partials/above.hbs", "utf-8"));
 hbs.registerPartial("below", fs.readFileSync("./partials/below.hbs", "utf-8"));
@@ -186,14 +186,6 @@ app.get('/robots.txt', function(req, res) {
     res.write("Disallow: /\n");
     res.end();
 
-});
-
-app.get('/favicon.ico', function(req, res) {
-    request.get(process.env.FAVICON_ICO).pipe(res);
-});
-
-app.get('/favicon.svg', function(req, res) {
-    request.get(process.env.FAVICON_SVG).pipe(res);
 });
 
 app.get('/', function(req, res) {
