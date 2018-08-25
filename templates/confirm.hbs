@@ -3,6 +3,12 @@
     function setURL(selector, url) {
         $(selector).val(url);
     }
+    $(function() {
+        $(".inputclear").on('click', function() {
+            console.log( $( this ) );
+            $(this).parent().children("input").val('');
+        });
+    });
 </script>
 
 <p>
@@ -55,7 +61,10 @@
         {{#each socialsites as |socialsite| }}
             <div class="input-field">
                 <label>{{this.id}}</label>
-                <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
+                <div class="input-group">
+                    <input type="text" name="{{this.id}}" value="{{lookup ../metadata this.id}}" />
+                    <button type="button" class="button button-secondary inputclear">X</button>
+                </div>
                 {{#if (hasAlternate this.id) }}
                     {{#each (getAlternates this.id) as | alternate | }}
                         {{alternate}} <a href="javascript:setURL('input[name={{socialsite.id}}]', '{{alternate}}');" class="button button-sm button-secondary">Use</a><br/>
