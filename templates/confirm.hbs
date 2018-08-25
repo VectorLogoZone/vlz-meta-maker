@@ -23,8 +23,13 @@
             {{/if}}
         </div>
         <div class="input-field">
-            <label>Title (as short as possible, no tag line)</label>
+            <label>Title (as short as possible, no tag line){{ toJSON metadata.alttitle }}</label>
             <input type="text" name="title" value="{{metadata.title}}" />
+            {{# if (hasAlternate "title") }}
+                {{#each  metadata.alttitle as | alternate | }}
+                    {{alternate}} <a href="javascript:setURL('input[name=title]', '{{alternate}}');" class="button button-sm button-secondary">Use</a><br/>
+                {{/each}}
+            {{/if}}
         </div>
         <div class="input-field">
             <label>ID (based on website, must be unique)</label>

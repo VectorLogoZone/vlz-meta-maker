@@ -294,6 +294,13 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
     const match = buf.match(new RegExp("<title>(.*)</title>"));
     if (match != null) {
         metadata.title = match[1];
+        metadata.alttitle = [ metadata.title ];
+        if (match[1].indexOf(" - ") > 0) {
+            metadata.alttitle = metadata.alttitle.concat(match[1].split(" - "));
+        }
+        if (match[1].indexOf(" | ") > 0) {
+            metadata.alttitle = metadata.alttitle.concat(match[1].split(" | "));
+        }
     } else {
         messages.push("WARNING: no title");
     }
