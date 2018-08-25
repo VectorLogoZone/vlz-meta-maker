@@ -291,7 +291,7 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         metadata.originalurl = url;
     }
 
-    const match = buf.match(new RegExp("<title>(.*)</title>"));
+    const match = buf.match(new RegExp("<title>([\\s\\S]*)</title>"));
     if (match != null) {
         metadata.title = match[1];
         metadata.alttitle = [ metadata.title ];

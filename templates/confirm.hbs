@@ -23,7 +23,7 @@
             {{/if}}
         </div>
         <div class="input-field">
-            <label>Title (as short as possible, no tag line){{ toJSON metadata.alttitle }}</label>
+            <label>Title (as short as possible, no tag line)</label>
             <input type="text" name="title" value="{{metadata.title}}" />
             {{# if (hasAlternate "title") }}
                 {{#each  metadata.alttitle as | alternate | }}
