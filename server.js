@@ -86,7 +86,7 @@ function getStatus() {
 }
 
 function isBlog(url) {
-    if (url.host.startsWith("blog.") || url.pathname.endsWith("/blog") || url.pathname.endsWith("/blog/")) {
+    if (url.host.startsWith("blog.") || url.host == "medium.com" || url.pathname.endsWith("/blog") || url.pathname.endsWith("/blog/")) {
         return true;
     }
     return false;
