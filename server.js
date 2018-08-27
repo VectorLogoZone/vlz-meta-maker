@@ -18,6 +18,7 @@ const geturls = require('get-urls');
 const yaml = require('js-yaml');
 const psl = require('psl');
 const cheerio = require('cheerio');
+const { DateTime } = require('luxon');
 
 // hack for nodejs SSL error: https://github.com/nodejs/node/issues/16196
 require("tls").DEFAULT_ECDH_CURVE = "auto";
@@ -196,25 +197,23 @@ app.get('/', function(req, res) {
 app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncMiddleware(async (req, res, next) => {
 
     if (req.body["step"] == "confirm") {
-        var logodata = Object.assign({ "created": new Date().toISOString() }, req.body);
-        delete logodata.step;
-        socialSites.forEach(function(ss) {
-            if (logodata[ss.id] == "") {
-                delete logodata[ss.id];
+        var logodata = Object.assign({}, req.body);
+        var keys = Object.keys(logodata);
+
+        keys.forEach(function(key) {
+            logodata[key] = logodata[key].trim()
+            if (logodata[key] == "") {
+                delete logodata[key];
             }
         });
-        if (logodata.guide == "") {
-            delete logodata.guide;
-        }
-        if (logodata.notes == "") {
-            delete logodata.notes;
-        }
+        delete logodata["step"];
         console.log("logodata=" + JSON.stringify(logodata));
         var s = new Readable;
         s.push(yaml.safeDump(logodata, { lineWidth: 4096, noRefs: true, sortKeys: true }));
         s.push(null);
         try {
-            await minioClient.putObject(process.env.S3_BUCKET, logodata.logohandle + ".yaml", s);
+            var s3path = DateTime.utc().toFormat("yyyy/MM/dd/yyyy-MM-dd-HHmmss") + "-" + logodata.logohandle + ".yaml";
+            await minioClient.putObject(process.env.S3_BUCKET, s3path, s);
             res.render("index", { step: "url", recaptcha: process.env.RECAPTCHA_SITEKEY, url: "", msgtype: "success", msgtext: "Metadata for '" + logodata.logohandle + "' saved!" });
         } catch (err) {
             console.error(err);
