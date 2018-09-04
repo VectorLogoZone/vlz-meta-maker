@@ -290,7 +290,7 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         metadata.originalurl = url;
     }
 
-    const match = buf.match(new RegExp("<title>([\\s\\S]*)</title>"));
+    const match = buf.match(new RegExp("<title>([\\s\\S]*?)</title>"));
     if (match != null) {
         metadata.title = match[1];
         metadata.alttitle = [ metadata.title ];
@@ -299,6 +299,9 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         }
         if (match[1].indexOf(" | ") > 0) {
             metadata.alttitle = metadata.alttitle.concat(match[1].split(" | "));
+        }
+        if (match[1].indexOf(": ") > 0) {
+            metadata.alttitle = metadata.alttitle.concat(match[1].split(": "));
         }
     } else {
         messages.push("WARNING: no title");
