@@ -1,4 +1,10 @@
 {
-	"name": "vlz-meta-maker",
-	"alias": "metamaker.vectorlogo.zone"
+    "name": "vlz-meta-maker",
+    "alias": "metamaker.vectorlogo.zone",
+    "scale": {
+        "sfo1": {
+            "min": 1,
+            "max": 1
+        }
+    }
 }
