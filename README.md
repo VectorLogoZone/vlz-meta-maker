@@ -33,7 +33,7 @@ See the [to do list](TODO.md) for a list of things that are planned.
 [![npm](https://www.vectorlogo.zone/logos/npmjs/npmjs-ar21.svg)](https://www.npmjs.com/ "JS Package Management")
 [![Public Suffix List](https://www.vectorlogo.zone/logos/mozilla/mozilla-ar21.svg)](https://publicsuffix.org/ "Public Suffix List")
 [![Shoelace CSS](https://www.vectorlogo.zone/logos/shoelacestyle/shoelacestyle-ar21.svg)](https://shoelace.style/ "CSS")
-[![Zeit](https://www.vectorlogo.zone/logos/zeit/zeit-ar21.svg)](https://www.zeit.com/ "Hosting")
+[![Zeit](https://www.vectorlogo.zone/logos/zeit/zeit-ar21.svg)](https://www.zeit.co/ "Hosting")
 
 * [sindresorhus/get-urls](https://github.com/sindresorhus/get-urls)
 
