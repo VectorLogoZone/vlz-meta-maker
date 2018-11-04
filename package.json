@@ -2,7 +2,7 @@
     "name": "vlz-meta-maker",
     "version": "2018.08.25",
     "description": "Fill in metadata (index.md) for a logo on VectorLogo.Zone",
-    "license-actual-since-npm-is-a-piece-of-shit-and-does-not-follow-the-actual-spdx-spec": "AGPL-3.0-or-later",
+    "license-actual-since-npm-does-not-follow-the-actual-spdx-spec": "AGPL-3.0-or-later",
     "license": "AGPL-3.0",
     "main": "server.js",
     "scripts": {

@@ -1,8 +1,6 @@
-<img alt="TIL Logo" src="https://metamaker.vectorlogo.zone/favicon.svg" height="96" >
+# VLZ Meta Maker [<img alt="VectorLogoZone Logo" src="https://metamaker.vectorlogo.zone/favicon.svg" height="90" align="right">](https://metamaker.vectorlogo.zone/)
 
-# VLZ Meta Maker
-
-[VLZ Meta Maker](https://metamaker.vectorlogo.zone/) is a website to automate the making the metadata (as stored in `index.md`) for a logo on [VectorLogoZone](https://www.vectorlogo.zone/).
+[VLZ Meta Maker](https://metamaker.vectorlogo.zone/) is a website to automate making the metadata (as stored in `index.md`) for a logo on [VectorLogoZone](https://www.vectorlogo.zone/).
 
 Currently the metadata is stored on S3 and reviewed before it is commited to VLZ.
 
