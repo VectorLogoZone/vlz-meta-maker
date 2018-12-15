@@ -1,8 +1,14 @@
 {
-    "name": "vlz-meta-maker",
     "alias": "metamaker.vectorlogo.zone",
+    "env": {
+        "S3_ACCESS_KEY": "@vlzmm-s3-access-key",
+        "S3_SECRET_KEY": "@vlzmm-s3-secret-key",
+        "S3_BUCKET": "@vlzmm-s3-bucket"
+    },
     "features": {
         "cloud": "v2"
     },
-    "type": "docker"
+    "name": "vlz-meta-maker",
+    "type": "docker",
+    "version": 1
 }
