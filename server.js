@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const async = require('async');
 const minio = require('minio');
 const multer  = require('multer');
+const puppeteer = require('puppeteer');
 const Readable = require('stream').Readable;
 const { URL } = require('url');
 const geturls = require('get-urls');
@@ -318,28 +319,45 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
         }
     }
     let messages = [];
+    const metadata = {};
 
     const mainURL = new URL(url);
 
     messages = messages.concat(checkForDuplicates(mainURL));
 
-    const options = {
-        url: url,
-        //encoding: null,
-        headers: {
-            'User-Agent': USER_AGENT
-        },
-        resolveWithFullResponse: true,
-        timeout: 10000  // in millis
-    };
-    const response = await rp(options);
-    const buf = response.body;
+    let buf = "";
 
- 
-    const metadata = { "website": response.request.uri.href };
-    if (url != response.request.uri.href) {
-        metadata.originalurl = url;
-    }
+    const useChrome = req.body["use_chrome"];
+    if (useChrome === "Y") {
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox']
+        });
+        const page = await browser.newPage();
+        const response = await page.goto(url, { waitUntil: "networkidle2"});
+        metadata.website = response.url();
+        if (url != response.url()) {
+            metadata.originalurl = url;
+        }
+        buf = await page.content();
+    } else {
+        const options = {
+            url: url,
+            //encoding: null,
+            headers: {
+                'User-Agent': USER_AGENT
+            },
+            resolveWithFullResponse: true,
+            timeout: 10000  // in millis
+        };
+        const response = await rp(options);
+        buf = response.body;
+
+        metadata.website = response.request.uri.href;
+        if (url != response.request.uri.href) {
+            metadata.originalurl = url;
+        }
+   }
+
 
     const match = buf.match(new RegExp("<title>([\\s\\S]*?)</title>"));
     if (match != null) {
