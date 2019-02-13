@@ -10,8 +10,12 @@
         });
     });
 </script>
-
-<p>
+{{#if messages}}
+    {{#each  messages as | message | }}
+        <div class="alert alert-info">{{message}}</div>
+    {{/each}}
+{{/if}}
+<p>{{messages}}x
     Make the <code>index.md</code> file by parsing a website URL
 </p>
 <p>

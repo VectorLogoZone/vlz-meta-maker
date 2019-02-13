@@ -87,6 +87,54 @@ function getStatus() {
 	return retVal;
 }
 
+function checkForDuplicates(url) {
+    const retVal = [];
+
+    //retVal.push("This is a test: " + url.host);
+
+    const domain = psl.parse(url.host).domain;
+    if (domain in existing) {
+        for (row of existing[domain]) {
+            if (row.website == url.href) {
+                retVal.push("Exact match with " + row.name);
+            } else {
+                retVal.push("Possible duplicate: " + row.name + " (" + row.website + ")");
+            }
+        }
+    }
+
+    return retVal;
+}
+
+let existing = {};
+
+async function loadExisting() {
+
+    const options = {
+        url: "https://www.vectorlogo.zone/util/apidata.json",
+        //encoding: null,
+        json: true,
+        headers: {
+            'User-Agent': USER_AGENT
+        },
+        resolveWithFullResponse: true,
+        timeout: 10000  // in millis
+    };
+    const data = await rp(options);
+    console.log({ count: data.body.length }, "existing data loaded");
+
+    for (row of data.body) {
+
+        parsed = psl.parse(new URL(row.website).host);
+        //console.log(parsed.domain);
+        if (parsed.domain in existing) {
+            existing[parsed.domain].push(row);
+        } else {
+            existing[parsed.domain] = [ row ];
+        }
+    }
+}
+
 function isBlog(url) {
     if (url.host.startsWith("blog.") || url.host == "medium.com" || url.pathname.endsWith("/blog") || url.pathname.endsWith("/blog/")) {
         return true;
@@ -269,8 +317,11 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
             return;
         }
     }
+    let messages = [];
 
     const mainURL = new URL(url);
+
+    messages = messages.concat(checkForDuplicates(mainURL));
 
     const options = {
         url: url,
@@ -284,8 +335,7 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
     const response = await rp(options);
     const buf = response.body;
 
-    const messages = [];
-
+ 
     const metadata = { "website": response.request.uri.href };
     if (url != response.request.uri.href) {
         metadata.originalurl = url;
@@ -346,7 +396,7 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
     }
 
     if (req.body["step"] == "url") {
-        res.render("confirm", { metadata: metadata, socialsites: socialSites, step: "confirm" });
+        res.render("confirm", { messages, metadata, socialsites: socialSites, step: "confirm" });
     }
 }));
 
@@ -376,7 +426,12 @@ function sendJson(req, res, jsonObj) {
     res.end();
 }
 
-const listener = app.listen(process.env.PORT || 4000, function () {
-    console.log('Listening on port ' + listener.address().port);
-});
+async function main() {
+    await loadExisting();
 
+    const listener = app.listen(process.env.PORT || 4000, function () {
+        console.log('Listening on port ' + listener.address().port);
+    });
+}
+
+main();

@@ -4,4 +4,4 @@
 #
 
 export $(grep ^[^\#] .env)
-nodemon server.js
+npx nodemon server.js
