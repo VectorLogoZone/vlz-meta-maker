@@ -12,6 +12,7 @@ docker push gcr.io/vectorlogozone/metamaker:latest
 
 gcloud beta run deploy vlz-metamaker \
 	--image gcr.io/vectorlogozone/metamaker \
+	--memory 512M \
 	--platform managed \
 	--project vectorlogozone \
     --region us-central1 \
