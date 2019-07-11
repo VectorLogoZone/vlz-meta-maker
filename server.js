@@ -330,7 +330,8 @@ app.post('/', multer({ storage: multer.memoryStorage() }).single('file'), asyncM
     const useChrome = req.body["use_chrome"];
     if (useChrome === "Y") {
         const browser = await puppeteer.launch({
-            args: ['--no-sandbox']
+            args: ['--no-sandbox' ],
+            executablePath: '/usr/bin/chromium-browser'
         });
         const page = await browser.newPage();
         const response = await page.goto(url, { waitUntil: "networkidle2"});

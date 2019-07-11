@@ -1,15 +1,18 @@
 #!/bin/bash
-#
-# deploy to zeit
-#
-
 
 set -o errexit
 set -o pipefail
 set -o nounset
 
-now \
-    --env COMMIT=$(git rev-parse --short HEAD) \
-    --env LASTMOD=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
-    && now alias \
-    && now rm $(cat ./now.json | jq '.name' --raw-output) --safe --yes
+export $(cat .env)
+
+docker build -t vlz-metamaker .
+docker tag vlz-metamaker:latest gcr.io/vectorlogozone/metamaker:latest
+docker push gcr.io/vectorlogozone/metamaker:latest
+
+gcloud beta run deploy vlz-metamaker \
+	--image gcr.io/vectorlogozone/metamaker \
+	--platform managed \
+	--project vectorlogozone \
+    --region us-central1 \
+	--update-env-vars "COMMIT=$(git rev-parse --short HEAD),LASTMOD=$(date -u +%Y-%m-%dT%H:%M:%SZ),S3_ACCESS_KEY=${S3_ACCESS_KEY},S3_SECRET_KEY=${S3_SECRET_KEY},S3_BUCKET=${S3_BUCKET}"
