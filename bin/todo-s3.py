@@ -12,7 +12,7 @@ import time
 import yaml
 
 default_input = "metadata.vectorlogo.zone"
-default_output = "/home/amarcuse/site/vectorlogozone/www/logos"
+default_output = "/home/amarcuse/workspace/vectorlogozone/www/logos"
 default_profile = "vlz-meta-maker"
 
 parser = argparse.ArgumentParser()
